@@ -1,7 +1,9 @@
 package magazyn;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
+
 import java.math.BigDecimal;
 
 
@@ -11,29 +13,41 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(name="items")
-@NamedQuery(name="Item.findAll", query="SELECT i FROM Item i")
+@NamedQueries({
+	@NamedQuery(name="Item.findAll", query="SELECT i FROM ItemEntity i")
+}) 
+
 public class ItemEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
-
-	private int amount;
-
-	@Lob
-	private String category;
-
-	@Lob
-	private String description;
-
 	@Lob
 	private String name;
-
+	private int amount;
+	@Lob
+	private String category;
+	@Lob
+	private String description;
 	private BigDecimal price;
+	
 
-	public ItemEntity() {
+	public ItemEntity() {}
+	
+	public ItemEntity(String name, int amount, String category, String description, BigDecimal price) {
+		
+		this.name = name;
+		this.amount = amount;
+		this.category = category;
+		this.description = description;
+		this.price = price;
 	}
+	
+	
+	//GETTERS / SETTERS
+	
+	
 
 	public int getId() {
 		return this.id;

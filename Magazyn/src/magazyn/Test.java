@@ -17,7 +17,7 @@ public class Test extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	@EJB private ManageDAO manage;
-
+	
     public Test() {
         super();
         // TODO Auto-generated constructor stub
@@ -26,11 +26,13 @@ public class Test extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		ItemEntity item = new ItemEntity();
+		/*ItemEntity item = new ItemEntity();
 		item.setAmount(10);
 		item.setName("hehe");
-		manage.addItem(item);
+		manage.addItem(item);*/
 	}
+	
+	
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub

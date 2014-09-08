@@ -6,6 +6,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 
 @Stateless
@@ -15,6 +16,8 @@ public class ManageDBImpl implements ManageDAO {
 	
 	@PersistenceContext
 	private EntityManager em;
+	
+	public ManageDBImpl() {}
 
 	@Override
 	public void addItem(ItemEntity item) {
@@ -22,8 +25,13 @@ public class ManageDBImpl implements ManageDAO {
 		em.persist(item);
 		em.flush();
 	}
-
 	
+	
+	public List<ItemEntity> getAllItems() {
+		
+		TypedQuery<ItemEntity> query = em.createNamedQuery("Item.findAll", ItemEntity.class);
+		return query.getResultList();
+	}
 	
 	
 }
