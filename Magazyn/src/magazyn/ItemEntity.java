@@ -1,9 +1,7 @@
 package magazyn;
 
 import java.io.Serializable;
-
 import javax.persistence.*;
-
 import java.math.BigDecimal;
 
 
@@ -14,10 +12,13 @@ import java.math.BigDecimal;
 @Entity
 @Table(name="items")
 @NamedQueries({
-	@NamedQuery(name="Item.findAll", query="SELECT i FROM ItemEntity i")
+	@NamedQuery(name="Items.findAll", query="SELECT e FROM ItemEntity e"),
+	@NamedQuery(name="Items.searchByName", query="SELECT e FROM ItemEntity e WHERE e.name LIKE '%:name%'"),
+	@NamedQuery(name="Items.searchByCat", query="SELECT e FROM ItemEntity e WHERE e.category LIKE '%:cat%'"),
+	@NamedQuery(name="Items.searchByDesc", query="SELECT e MATCH(e.description) AGAINST(':desc') AS rel "
+			+ "FROM ItemEntity e WHERE MATCH(e.description) AGAINST(':desc')")
 }) 
-
-public class ItemEntity implements Serializable {
+public class ItemEntity implements Serializable, Comparable<ItemEntity> {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -32,6 +33,22 @@ public class ItemEntity implements Serializable {
 	private String description;
 	private BigDecimal price;
 	
+	
+	public static enum SortMode { 
+		COMPARE_BY_NAME("Name"), COMPARE_BY_CAT("Category"), COMPARE_BY_PRICE("Price");
+		
+		private String name;
+		
+		SortMode(String name) {
+			
+			this.name = name;
+		}
+		
+		public String getName() {
+			return name;
+		}
+	}
+	private static SortMode mode;
 
 	public ItemEntity() {}
 	
@@ -42,6 +59,23 @@ public class ItemEntity implements Serializable {
 		this.category = category;
 		this.description = description;
 		this.price = price;
+	}
+	
+	
+	@Override
+	public int compareTo(ItemEntity o) {
+		
+		switch(mode) {
+		
+		case COMPARE_BY_NAME:
+			return String.CASE_INSENSITIVE_ORDER.compare(name, o.getName());
+		case COMPARE_BY_CAT:
+			return String.CASE_INSENSITIVE_ORDER.compare(category, o.getCategory());
+		case COMPARE_BY_PRICE:
+			return price.compareTo(o.getPrice());
+			
+		}
+		return 0;
 	}
 	
 	
@@ -95,6 +129,14 @@ public class ItemEntity implements Serializable {
 
 	public void setPrice(BigDecimal price) {
 		this.price = price;
+	}
+
+	public static void setMode(SortMode mode) {
+		ItemEntity.mode = mode;
+	}
+
+	public static SortMode getMode() {
+		return mode;
 	}
 
 }

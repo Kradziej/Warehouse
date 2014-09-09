@@ -21,10 +21,10 @@ public class StockView {
 	@PostConstruct
 	void init() {
 		
-		ItemEntity item = new ItemEntity("hehe", 20, "rózne", "takkie rozne produkty", new BigDecimal(120.23));
-		ItemEntity item2 = new ItemEntity("hehed", 20, "ródzne", "takdddkie rozne produkty", new BigDecimal(120.23));
-		manage.addItem(item2);
-		manage.addItem(item);
+		//ItemEntity item = new ItemEntity("hehe", 20, "rózne", "takkie rozne produkty", new BigDecimal(120.23));
+		//ItemEntity item2 = new ItemEntity("hehed", 20, "ródzne", "takdddkie rozne produkty", new BigDecimal(120.23));
+		//manage.addItem(item2);
+		//manage.addItem(item);
 	}
 	
 	
