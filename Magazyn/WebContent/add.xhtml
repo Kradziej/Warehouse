@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3c.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:f="http://java.sun.com/jsf/core">
+ 
+ 
+ <h:head>
+ 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+ 	
+ 	<style>
+ 	
+ 
+ 	
+ 	</style>
+ </h:head>
+
+
+<h:body>
+
+	<h:form id="addForm">
+	
+	<h:outputText value="Name: " />
+	<p:inputText id="sds" value="#{addView.name}" />
+	<h:outputText value="Description: " />
+	<p:inputText id="sdds" value="#{addView.description}" />
+	<h:outputText value="Category: " />
+	<p:inputText id="dsds" value="#{addView.category}" />
+	<h:outputText value="Amount: " />
+	<p:inputText id="sfdds" value="#{addView.amount}" />
+	<h:outputText value="Price: " />
+	<p:inputText id="sfds" value="#{addView.price}" />
+	
+	<p:commandButton id="addButton" styleClass="addButton" value="Dodaj" actionListener="#{addView.add}" update="@form" />
+	
+	</h:form>
+
+</h:body>
+
+
+</html>
