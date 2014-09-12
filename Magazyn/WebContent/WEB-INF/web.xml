@@ -65,4 +65,13 @@
     <servlet-name>Faces Servlet</servlet-name>
     <url-pattern>*.html</url-pattern>
   </servlet-mapping>
+  
+  
+  <!-- error page -->
+  
+  <error-page>
+    <exception-type>magazyn.DatabaseException</exception-type >
+    <location>/ErrorHandler</location>
+  </error-page>
+  
 </web-app>

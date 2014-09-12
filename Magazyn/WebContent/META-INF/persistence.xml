@@ -9,6 +9,7 @@
         
       <properties>
         <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+        <property name="openjpa.jdbc.DBDictionary" value="mysql(ReservedWords='AGAINST')"/>
      </properties>
      
     </persistence-unit>
