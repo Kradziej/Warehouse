@@ -22,16 +22,26 @@ public class ManageDBImpl implements ManageDAO {
 	public ManageDBImpl() {}
 
 	@Override
-	public void addItem(ItemEntity item) {
+	public ItemEntity addItem(ItemEntity item, int categoryId) throws IllegalArgumentException {
 		
+		CategoryEntity cat = em.find(CategoryEntity.class, categoryId);
+		item.setCategory(cat);
 		em.persist(item);
 		em.flush();
+		return item;	
 	}
 	
-	
+	@Override
 	public List<ItemEntity> getAllItems() {
 		
 		TypedQuery<ItemEntity> query = em.createNamedQuery("Items.findAll", ItemEntity.class);
+		return query.getResultList();
+	}
+	
+	@Override
+	public List<CategoryEntity> getAllCategories() {
+		
+		TypedQuery<CategoryEntity> query = em.createNamedQuery("Categories.findAll", CategoryEntity.class);
 		return query.getResultList();
 	}
 
@@ -77,8 +87,10 @@ public class ManageDBImpl implements ManageDAO {
 
 	@Override
 	public void deleteItem(int id) {
-		// TODO Auto-generated method stub
 		
+		ItemEntity item = em.find(ItemEntity.class, id);
+		em.remove(item);
+		em.flush();
 	}
 	
 	

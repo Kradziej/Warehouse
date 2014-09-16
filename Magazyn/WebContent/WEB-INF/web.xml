@@ -32,6 +32,12 @@
   </context-param>
   
   
+  <context-param>
+    <param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
+    <param-value>0</param-value>
+  </context-param>
+  
+  
    <!-- servlets --> 
   
   <servlet>

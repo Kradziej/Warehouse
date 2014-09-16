@@ -1,6 +1,7 @@
 package magazyn;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +30,7 @@ import com.sun.corba.se.spi.orbutil.fsm.Action;
 @ManagedBean
 @ViewScoped
 //@RequestScoped
-public class SearchView {
+public class SearchView implements Serializable {
 	
 	public static enum SearchMode { 
 		
@@ -54,8 +55,9 @@ public class SearchView {
 	private String searchQuery;
 	private boolean searchComplete;
 	private SearchMode searchMode;
-	private ItemEntityComparator comparator;
-	private int removeItemId;
+	//not serializable
+	private transient ItemEntityComparator comparator;
+	private boolean editMode;
 	
 
 	public SearchView() {}
@@ -64,6 +66,7 @@ public class SearchView {
 	public void resetView() {
 		
 		comparator = null;
+		editMode = false;
 	}
 
 	
@@ -96,34 +99,43 @@ public class SearchView {
 			break;
 		}
 		
-		System.out.println(items);
-		System.out.println(isSearchResult());
-		comparator = new ItemEntityComparator();
+		comparator = new ItemEntityComparator(-1);
 		searchComplete = true;
+	}
+	
+	
+	public void edit() {
+		
+		editMode = !editMode;
+		System.out.println("edit");
+		System.out.println(items.get(0).getName());
+	}
+	
+	public void editItem() {
+		
+		System.out.println("editItem");
+		editMode = !editMode;
 	}
 	
 	
 	public void removeItem() {
 		
-		ExternalContext exc = FacesContext.getCurrentInstance().getExternalContext();
-		System.out.println("ffff");
+		Map<String,String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+		// try catch here for database error ???????
+		int id = Integer.parseInt(params.get("removeItemId"));
+		manage.deleteItem(id);
 		
+		/*
 		PartialViewContext con = FacesContext.getCurrentInstance().getPartialViewContext();
 		PartialResponseWriter writer = con.getPartialResponseWriter();
 		
+		breaking partial-response so oncomplete is not called
 		
 		try {
-			/*writer.startDocument();
-			writer.redirect("<?xml version='1.0' encoding='utf-8'?>"+
-							"<partial-response>"+
-								"<redirect url='/contextpath/faces/ajax/redirecttarget.xhtml'>"+
-								"</redirect>"+
-								"</partial-response>");
-			writer.endDocument();*/
 			writer.write("invalid   ");
 		} catch (IOException e) {
 			System.out.println("Cannot write partial response error");
-		}
+		}*/
 		
 	}
 	
@@ -174,12 +186,13 @@ public class SearchView {
 	}
 
 
-	public int getRemoveItemId() {
-		return removeItemId;
+	public boolean isEditMode() {
+		return editMode;
 	}
 
 
-	public void setRemoveItemId(int removeItemId) {
-		this.removeItemId = removeItemId;
+	public void setEditMode(boolean editMode) {
+		this.editMode = editMode;
 	}
+
 }

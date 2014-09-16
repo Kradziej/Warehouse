@@ -4,9 +4,10 @@ import java.util.List;
 
 public interface ManageDAO {
 	
-	void addItem(ItemEntity item);
+	ItemEntity addItem(ItemEntity item, int categoryId);
 	void deleteItem(int id);
 	List<ItemEntity> getAllItems();
+	List<CategoryEntity> getAllCategories();
 	List<ItemEntity> getItemsByName(String queryString);
 	List<ItemEntity> getItemsByCategory(String queryString);
 	List<ItemEntity> getItemsByDesc(String queryString);

@@ -18,6 +18,18 @@ public class ItemEntityComparator implements Comparator<ItemEntity> {
 		reverse = 1;
 	}
 	
+	public ItemEntityComparator(int reverseMode) {
+
+		this.reverse = reverseMode;
+	}
+	
+	
+	public ItemEntityComparator(SortMode mode, int reverseMode) {
+		
+		this.mode = mode;
+		this.reverse = reverseMode;
+	}
+	
 	public static enum SortMode { 
 		
 		SORT_BY_NAME("Name"), SORT_BY_PRICE("Price"), 
@@ -44,7 +56,7 @@ public class ItemEntityComparator implements Comparator<ItemEntity> {
 			case SORT_BY_NAME:
 				return reverse * String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName());
 			case SORT_BY_CATEGORY:
-				return reverse * String.CASE_INSENSITIVE_ORDER.compare(o1.getCategory(), o2.getCategory());
+				return reverse * String.CASE_INSENSITIVE_ORDER.compare(o1.getCategory().getName(), o2.getCategory().getName());
 			case SORT_BY_PRICE:
 				return reverse * o1.getPrice().compareTo(o2.getPrice());
 			case SORT_BY_AMOUNT:

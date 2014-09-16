@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3c.org/1999/xhtml"
 	  xmlns:h="http://java.sun.com/jsf/html"
 	  xmlns:p="http://primefaces.org/ui"
-	  xmlns:f="http://java.sun.com/jsf/core">
+	  xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:ui="http://java.sun.com/jsf/facelets">
  
  
  <h:head>
@@ -11,7 +12,101 @@
  	
  	<style>
  	
- 
+ 	nav {
+		border-bottom: 2px solid #836FF2;
+		opacity: 0.8;
+		margin-bottom: 50px;
+	}
+	
+	nav a:after	 {
+		content: " /";
+		color: black;
+	}
+
+	nav ul {
+		list-style: none outside none;
+		margin: 0;
+		padding: 0;
+		margin-left: 15px;
+	}
+	
+	nav ul li {
+		display: inline-block;
+	}
+	
+	nav a {
+		font-size: 1.1em;
+		text-decoration: none;
+	}
+	
+	html {
+		height: 100%;
+	}
+	
+	body {
+		font-size: 1.2em;
+		height: 85%;
+	}
+ 	
+	#addForm {
+		margin: 0 auto;
+		width: 400px;
+	}
+	
+	.cat {
+	
+		vertical-align: middle;
+		margin-right: 100px;
+		margin-left: 5px;
+		margin-top: 7px;
+	}
+	
+	.catLabel {
+	
+		position: relative;
+		top: 4px;
+	}
+	
+	
+	#addForm input {
+	
+		margin: 7px 2px;
+		padding: 2px;
+		border: 1px dashed black;
+		width: 360px;
+		height: 30px;
+		
+	}
+ 	
+ 	#addForm textarea {
+ 		margin: 7px 2px;
+ 		padding: 2px;
+ 		border: 1px dashed black;
+		resize: both;
+		width: 360px;
+		height: 160px;
+ 	}
+ 	
+ 	.addButton {
+ 		position: absolute;
+ 		margin-left: 20px;
+ 	}
+ 	
+ 	
+ 	.table {
+ 	
+ 		vertical-align: middle;
+ 	}
+ 	
+ 	#messages {
+ 	
+ 		width: 900px;
+ 		margin: auto auto 30px;
+ 	}
+ 	
+ 	.desc {
+ 		vertical-align: middle;
+ 	}
  	
  	</style>
  </h:head>
@@ -19,23 +114,48 @@
 
 <h:body>
 
-	<h:form id="addForm">
+	<ui:include src="header.xhtml" />
 	
-	<h:outputText value="Name: " />
-	<p:inputText id="sds" value="#{addView.name}" />
-	<h:outputText value="Description: " />
-	<p:inputText id="sdds" value="#{addView.description}" />
-	<h:outputText value="Category: " />
-	<p:inputText id="dsds" value="#{addView.category}" />
-	<h:outputText value="Amount: " />
-	<p:inputText id="sfdds" value="#{addView.amount}" />
-	<h:outputText value="Price: " />
-	<p:inputText id="sfds" value="#{addView.price}" />
-	
-	<p:commandButton id="addButton" styleClass="addButton" value="Dodaj" actionListener="#{addView.add}" update="@form" />
-	
-	</h:form>
-
+	<p:outputPanel styleClass="wrapper" style="display:table; height: 100%; width: 100%">
+	  <p:outputPanel styleClass="table" style="display:table-cell">
+	  
+	    <p:messages id="messages" showDetail="true" showSummary="false" autoUpdate="true" closable="false" />
+		<h:form id="addForm">
+			
+			<p:outputLabel for="name" value="Nazwa: " />
+			<p:inputText id="name" value="#{addView.name}" required="true" >
+				<f:validateLength for="name" minimum="3" maximum="100" />
+			</p:inputText>
+			
+			<p:commandButton id="addButton" styleClass="addButton" value="Dodaj" actionListener="#{addView.add}" update="@form" />
+			
+			
+			<p:outputLabel for="desc" styleClass="desc" value="Opis: " />
+			<p:inputTextarea id="desc" value="#{addView.description}" >
+				<f:validateLength for="desc" minimum="3" maximum="1000" />
+			</p:inputTextarea>
+			
+			<p:outputLabel for="amount" value="Ilość: " />
+			<p:inputText id="amount" value="#{addView.amount}" required="true" 
+			converterMessage="Niepoprawna wartość ilości towaru" 
+			validatorMessage="Niepoprawna ilość towaru, wartość powinna być wieksza od 0" >
+				 <f:validateLongRange minimum="1" maximum="9999" />
+			</p:inputText>
+			
+			<p:outputLabel for="price" value="Cena: " />
+			<p:inputText id="price" value="#{addView.price}" required="true" 
+			converterMessage="Niepoprawny format ceny" validatorMessage="Niepoprawny format ceny" >
+				 <f:validateDoubleRange minimum="0.00" maximum="9999.99" />
+			</p:inputText>
+			
+			<p:outputLabel for="cat" styleClass="catLabel" value="Kategoria: " />
+			<p:selectOneMenu id="cat" styleClass="cat" value="#{addView.categoryId}" >
+				<f:selectItems value="#{addView.categories}" var="cat" itemLabel="#{cat.name}" itemValue="#{cat.id}"/>
+			</p:selectOneMenu>
+		
+		</h:form>
+		</p:outputPanel>
+	</p:outputPanel>
 </h:body>
 
 

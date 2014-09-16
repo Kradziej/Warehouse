@@ -1,45 +1,61 @@
 package magazyn;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
 
 @ManagedBean
-@RequestScoped
-public class AddView {
+@ViewScoped
+public class AddView implements Serializable {
 	
 	
 	@EJB private ManageDAO manage; 
 
 	private String name;
 	private int amount;
-	private String category;
+	private int categoryId;
 	private String description;
 	private BigDecimal price;
+	private List<CategoryEntity> categories;
 	
 	
-	AddView() {}
+	public AddView() {}
 	
 	
 	public void add(ActionEvent event) {
 		
+		String msg;
+		FacesMessage faceMsg = new FacesMessage();
+		ItemEntity item = new ItemEntity(name, amount, description, price);
 		
+		try {
+			item = manage.addItem(item, categoryId);
+			msg = "Dodano nowy towar "+item.getName()+" do kategorii " + item.getCategory().getName();
+			faceMsg.setSummary(msg);
+			faceMsg.setSeverity(FacesMessage.SEVERITY_INFO);
+		} catch (IllegalArgumentException e) {
+			System.out.println("Failed to save item to category of ID " + categoryId);
+			msg = "Nie uda³o sie dodaæ towaru";
+			faceMsg.setSummary(msg);
+			faceMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+		}
+		
+		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(msg));
 	}
 
+	
+	
 
 	
 	// GETTERS / SETTERS
-
-	public void setManage(ManageDAO manage) {
-		this.manage = manage;
-	}
 
 
 	public String getName() {
@@ -62,13 +78,13 @@ public class AddView {
 	}
 
 
-	public String getCategory() {
-		return category;
+	public int getCategoryId() {
+		return categoryId;
 	}
 
 
-	public void setCategory(String category) {
-		this.category = category;
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
 	}
 
 
@@ -96,5 +112,17 @@ public class AddView {
 		return manage;
 	}
 	
+	public void setManage(ManageDAO manage) {
+		this.manage = manage;
+	}
+
+
+	public List<CategoryEntity> getCategories() {
+		
+		if(categories == null)
+			categories = manage.getAllCategories();
+		
+		return categories;
+	}
 
 }

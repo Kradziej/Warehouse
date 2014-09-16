@@ -19,6 +19,11 @@
  		$(e.target).closest('li').slideUp('slow');
  	}
  	
+ 	function resizeInput(e) {
+ 		
+ 		
+ 	}
+ 	
  	</script>
  	
  	
@@ -49,6 +54,10 @@
 	nav a {
 		font-size: 1.1em;
 		text-decoration: none;
+	}
+	
+	body {
+		font-size: 1.2em;
 	}
  	
  	.logo {
@@ -101,21 +110,32 @@
  		font-weight: bold;
  	}
  	
+ 	.dataRow td input {
+ 	
+ 	}
+ 	
  	.dataRow td:nth-child(3) {
  		
  		width: 50%;
  	}
  	
- 	.dataRow td:nth-child(6) {
+ 	.editItem {
  	
  		padding: 0;
- 		width: 10px;
- 		height: 10px;
- 		vertical-align: top;
+ 		padding-right: 4px;
+ 		font-size: 0.8em !important;
+ 		position: relative;
+ 		bottom: 150px;
+ 		float: right;
  	}
  	
- 	.dataRow td:nth-child(7) {
- 		display: none;
+ 	.removeItem {
+ 		
+ 		padding: 0;
+ 		float: right;
+ 		font-size: 0.8em !important;
+ 		position: relative;
+ 		bottom: 150px;
  	}
  	
  
@@ -142,28 +162,28 @@
 
     <ui:include src="header.xhtml" />
     
-	
-
-	<h:form id="warehouseForm">
-	  <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
 	  <p:dataScroller id="searchResultScroller" value="#{searchView.items}" var="item" chunkSize="10">
 	  
         <f:facet name="header">
         	<p:outputPanel id="search">
-				<p:inputText id="searchQuery" styleClass="searchQuery" value="#{searchView.searchQuery}" />
-				<p:selectOneMenu id="mode" styleClass="mode" value="#{searchView.searchMode}">
-		     		<f:selectItems value="#{searchView.searchModes}" var="mode" itemLabel="#{mode.name}" itemValue="#{mode}"/>
-		     	</p:selectOneMenu>
-		     	<p:commandButton id="submitSearch" styleClass="submitSearch" value="#{msg.search}" actionListener="#{searchView.search}" update="@form" />
+        	
+        		<h:form>
+					<p:inputText id="searchQuery" styleClass="searchQuery" value="#{searchView.searchQuery}" />
+					<p:selectOneMenu id="mode" styleClass="mode" value="#{searchView.searchMode}">
+			     		<f:selectItems value="#{searchView.searchModes}" var="mode" itemLabel="#{mode.name}" itemValue="#{mode}"/>
+			     	</p:selectOneMenu>
+			     	<p:commandButton id="submitSearch" styleClass="submitSearch" value="#{msg.search}" actionListener="#{searchView.search}" update="-searchResultScroller" />
+		     	</h:form>
 		     	
 		     	<h:panelGrid styleClass="dataRow dataRowLabels" columns="5" cellpadding="0">
 		     		
-		     		<p:commandLink actionListener="#{searchView.sortTable}" update="@form" value="Name"  />
-		     		<p:commandLink actionListener="#{searchView.sortTable}" update="@form" value="Price"  />
-                    <h:outputText value="Description" />
-                    <p:commandLink actionListener="#{searchView.sortTable}" update="@form" value="Amount"  />
-                    <p:commandLink actionListener="#{searchView.sortTable}" update="@form" value="Category"  />
- 
+		     		<p:commandLink actionListener="#{searchView.sortTable}" update="-searchResultScroller" value="Nazwa"  />
+		     		<p:commandLink actionListener="#{searchView.sortTable}" update="-searchResultScroller" value="Cena"  />
+	                <h:outputText value="Opis" />
+	                <p:commandLink actionListener="#{searchView.sortTable}" update="-searchResultScroller" value="Ilość"  />
+	                <p:commandLink actionListener="#{searchView.sortTable}" update="-searchResultScroller" value="Kategoria"  />
+ 					
+ 					
                 </h:panelGrid>
 	     	</p:outputPanel>
         </f:facet>
@@ -172,22 +192,43 @@
             <!--<p:graphicImage name="demo/images/car/#{car.brand}-big.gif" /> -->
  
             <p:outputPanel>
-                <h:panelGrid styleClass="dataRow" columns="6" cellpadding="0">
+                <h:panelGrid styleClass="dataRow" columns="5" cellpadding="0">
                     
-                    <h:outputText value="#{item.name}" />
-                    <h:outputText value="#{item.price}" />
-                    <h:outputText value="#{item.description}" />
-                    <h:outputText value="#{item.amount}" />
-                    <h:outputText value="#{item.category}" />
-                   	<p:commandLink id="removeItem" action="#{searchView.removeItem()}" process="@this" onsuccess="removeItem(event)" value="x" style="color: red">
-                    	  <f:param name="removeItemId" value="#{item.id}" />
-                    </p:commandLink>
+                    <h:form id="nameForm">
+	                    <h:outputText value="#{item.name}" rendered="#{not searchView.editMode}" />
+	                    <p:inputText id="nameInput" value="#{item.name}" rendered="#{searchView.editMode}" required="true" label="Nazwa">
+	                    	<p:ajax update="@form" process="@form" listener="#{searchView.editItem}" />
+	                    </p:inputText>
+	                </h:form>
+	                 <h:form id="priceForm">
+	                    <h:outputText value="#{item.price}" rendered="#{not searchView.editMode}" />
+	                    <p:inputText value="#{item.price}" rendered="#{searchView.editMode}" required="true" label="Cena" />
+	                </h:form>    	
+	                <h:form id="descForm">    	
+	                    <h:outputText value="#{item.description}" rendered="#{not searchView.editMode}" />
+	                    <p:inputText value="#{item.description}" rendered="#{searchView.editMode}" required="true" label="Opis" />
+	                </h:form>   	
+	                <h:form id="amountForm">   	
+	                    <h:outputText value="#{item.amount}" rendered="#{not searchView.editMode}" />
+	       	            <p:inputText value="#{item.amount}" rendered="#{searchView.editMode}" required="true" label="Ilość" />
+	       	        </h:form>
+	       	        <h:form id="catForm">     	
+	                    <h:outputText value="#{item.category.name}" rendered="#{not searchView.editMode}" />
+	                    <p:inputText value="#{item.category.name}" rendered="#{searchView.editMode}" required="true" label="Kategoria" />
+                    </h:form>
                 </h:panelGrid>
+                <p:message id="messages" for="nameForm-nameInput" showDetail="true" showSummary="false" autoUpdate="true" closable="true" />
+               
+	            <p:commandLink id="removeItem" styleClass="removeItem" action="#{searchView.removeItem}" onsuccess="removeItem(event)" value="X" style="color: red">
+	               <f:param name="removeItemId" value="#{item.id}" />
+	            </p:commandLink>
+	            <p:commandLink id="editItem" styleClass="editItem" action="#{searchView.edit}" update="-searchResultScroller-itemRow" onsuccess="resizeInput()" value="E" style="color: blue" />
+               
+                    
             </p:outputPanel>
           </h:panelGrid>
    	   </p:dataScroller>
    	   
-	</h:form>
 
 </h:body>
 

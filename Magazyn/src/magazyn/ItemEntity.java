@@ -27,24 +27,25 @@ public class ItemEntity implements Serializable {
 	private String name;
 	private int amount;
 	@Lob
-	private String category;
-	@Lob
 	private String description;
 	private BigDecimal price;
 	
 	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="category_id")
+	private CategoryEntity category;
+	
 
 	public ItemEntity() {}
+		
 	
-	public ItemEntity(String name, int amount, String category, String description, BigDecimal price) {
+	public ItemEntity(String name, int amount, String description, BigDecimal price) {
 		
 		this.name = name;
 		this.amount = amount;
-		this.category = category;
 		this.description = description;
 		this.price = price;
 	}
-	
 	
 	//GETTERS / SETTERS
 	
@@ -64,14 +65,6 @@ public class ItemEntity implements Serializable {
 
 	public void setAmount(int amount) {
 		this.amount = amount;
-	}
-
-	public String getCategory() {
-		return this.category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
 	}
 
 	public String getDescription() {
@@ -96,6 +89,14 @@ public class ItemEntity implements Serializable {
 
 	public void setPrice(BigDecimal price) {
 		this.price = price;
+	}
+
+	public CategoryEntity getCategory() {
+		return category;
+	}
+
+	public void setCategory(CategoryEntity cat) {
+		this.category = cat;
 	}
 
 }
