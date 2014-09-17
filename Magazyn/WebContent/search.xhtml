@@ -19,6 +19,23 @@
  		$(e.target).closest('li').slideUp('slow');
  	}
  	
+ 	enterPressed;
+ 	function checkEnter(e) {
+ 		
+ 		enterPressed = false; 
+ 		if (e.keyCode == 13) { 
+ 			enterPressed = true; 
+ 			e.target.onchange();
+ 			e.preventDefault();
+ 			e.stopPropagation();
+ 		}
+ 	}
+ 	
+ 	function deleteDialog() {
+ 		
+ 		return confirm("Czy na pewno chcesz usunąc ten element z magazynu?");
+ 	}
+ 	
  	function resizeInput(e) {
  		
  		
@@ -112,11 +129,19 @@
  	
  	.dataRow td input {
  	
+ 		width: 80%;
+ 	}
+ 	
+ 	.dataRow td textarea {
+ 		
+ 		resize: both;
+ 		width: 70%;
  	}
  	
  	.dataRow td:nth-child(3) {
  		
  		width: 50%;
+ 		 word-wrap: break-word;
  	}
  	
  	.editItem {
@@ -124,8 +149,6 @@
  		padding: 0;
  		padding-right: 4px;
  		font-size: 0.8em !important;
- 		position: relative;
- 		bottom: 150px;
  		float: right;
  	}
  	
@@ -134,8 +157,6 @@
  		padding: 0;
  		float: right;
  		font-size: 0.8em !important;
- 		position: relative;
- 		bottom: 150px;
  	}
  	
  
@@ -162,17 +183,38 @@
 
     <ui:include src="header.xhtml" />
     
+    <p:messages id="message2" 
+	  showDetail="true" showSummary="false" autoUpdate="true" closable="true" />
+    
 	  <p:dataScroller id="searchResultScroller" value="#{searchView.items}" var="item" chunkSize="10">
 	  
         <f:facet name="header">
+        
         	<p:outputPanel id="search">
         	
-        		<h:form>
-					<p:inputText id="searchQuery" styleClass="searchQuery" value="#{searchView.searchQuery}" />
+        		<h:form id="searchForm">
+					<p:inputText id="searchQuery" styleClass="searchQuery" value="#{searchView.searchQuery}" 
+					rendered="#{not searchView.rangeMode}"  />
+					
+					<p:outputLabel for="fromPrice" value="Od: " rendered="#{searchView.rangeMode}"  />
+					<p:inputText id="fromPrice" styleClass="fromPrice" value="#{searchView.searchPriceFrom}" 
+					rendered="#{searchView.rangeMode}"  >
+						<f:validateDoubleRange minimum="0.00" maximum="9999.99" />
+					</p:inputText>
+					
+					<p:outputLabel for="toPrice" value="Do: "  rendered="#{searchView.rangeMode}" />
+					<p:inputText id="toPrice" styleClass="toPrice" value="#{searchView.searchPriceTo}" 
+					rendered="#{searchView.rangeMode}"  >
+						<f:validateDoubleRange minimum="0.00" maximum="9999.99" />
+					</p:inputText>
+					
 					<p:selectOneMenu id="mode" styleClass="mode" value="#{searchView.searchMode}">
-			     		<f:selectItems value="#{searchView.searchModes}" var="mode" itemLabel="#{mode.name}" itemValue="#{mode}"/>
+			     		<f:selectItems value="#{searchView.searchModes}" var="mode" 
+			     		itemLabel="#{mode.name}" itemValue="#{mode}" />
+			     		<p:ajax event="change" listener="#{searchView.selectSearchMode()}" process="@form" update="@form" />
 			     	</p:selectOneMenu>
-			     	<p:commandButton id="submitSearch" styleClass="submitSearch" value="#{msg.search}" actionListener="#{searchView.search}" update="-searchResultScroller" />
+			     	<p:commandButton id="submitSearch" styleClass="submitSearch" 
+			     	value="#{msg.search}" actionListener="#{searchView.search}" update="-searchResultScroller" />
 		     	</h:form>
 		     	
 		     	<h:panelGrid styleClass="dataRow dataRowLabels" columns="5" cellpadding="0">
@@ -192,40 +234,63 @@
             <!--<p:graphicImage name="demo/images/car/#{car.brand}-big.gif" /> -->
  
             <p:outputPanel>
+             <p:commandLink id="removeItem" styleClass="removeItem" action="#{searchView.removeItem}" 
+            onstart="return deleteDialog();" onsuccess="removeItem(event)" value="X" style="color: red">
+	               <f:param name="removeItemId" value="#{item.id}" />
+	        </p:commandLink>
+	        <p:commandLink id="editItem" styleClass="editItem" action="#{searchView.edit}" 
+	            update="-searchResultScroller-itemRow" process="-searchResultScroller-itemRow" 
+	            onsuccess="resizeInput()" value="E" style="color: blue" />
+               
+             	<h:form id="dataForm">
                 <h:panelGrid styleClass="dataRow" columns="5" cellpadding="0">
                     
-                    <h:form id="nameForm">
 	                    <h:outputText value="#{item.name}" rendered="#{not searchView.editMode}" />
-	                    <p:inputText id="nameInput" value="#{item.name}" rendered="#{searchView.editMode}" required="true" label="Nazwa">
-	                    	<p:ajax update="@form" process="@form" listener="#{searchView.editItem}" />
-	                    </p:inputText>
-	                </h:form>
-	                 <h:form id="priceForm">
+	                    <p:inputTextarea id="nameInput" onkeypress="checkEnter(event)" value="#{item.name}" 
+	                    rendered="#{searchView.editMode}" required="true" label="Nazwa" >
+	                    	<p:ajax update="-searchResultScroller-itemRow" process="-searchResultScroller-itemRow" 
+	                    	onstart="return enterPressed;" event="change" listener="#{searchView.editItem(item)}" />
+	                    	<p:ajax event="change" update="nameInput" />
+	                    	<f:validateLength for="name" minimum="3" maximum="100" />
+	                    </p:inputTextarea>
+	                    
 	                    <h:outputText value="#{item.price}" rendered="#{not searchView.editMode}" />
-	                    <p:inputText value="#{item.price}" rendered="#{searchView.editMode}" required="true" label="Cena" />
-	                </h:form>    	
-	                <h:form id="descForm">    	
+	                    <p:inputText id="priceInput" value="#{item.price}" onkeypress="checkEnter(event)" 
+	                    rendered="#{searchView.editMode}" required="true" label="Cena" 
+	                    converterMessage="Niepoprawny format ceny" validatorMessage="Niepoprawny format ceny" >
+	                    	<p:ajax update="-searchResultScroller-itemRow" process="-searchResultScroller-itemRow" 
+	                    	onstart="return enterPressed;" event="change" listener="#{searchView.editItem(item)}" />
+	                    	 <f:validateDoubleRange minimum="0.00" maximum="9999.99" />
+	                    </p:inputText>
+	                    
 	                    <h:outputText value="#{item.description}" rendered="#{not searchView.editMode}" />
-	                    <p:inputText value="#{item.description}" rendered="#{searchView.editMode}" required="true" label="Opis" />
-	                </h:form>   	
-	                <h:form id="amountForm">   	
+	                    <p:inputTextarea id="descInput" value="#{item.description}" onkeypress="checkEnter(event)"
+	                    rendered="#{searchView.editMode}" required="true" label="Opis" >
+	                    	<p:ajax update="-searchResultScroller-itemRow" process="-searchResultScroller-itemRow" 
+	                    	onstart="return enterPressed;" event="change" listener="#{searchView.editItem(item)}" />
+	                    	<f:validateLength for="desc" minimum="3" maximum="1000" />
+	                    </p:inputTextarea>
+	                    
 	                    <h:outputText value="#{item.amount}" rendered="#{not searchView.editMode}" />
-	       	            <p:inputText value="#{item.amount}" rendered="#{searchView.editMode}" required="true" label="Ilość" />
-	       	        </h:form>
-	       	        <h:form id="catForm">     	
+	       	            <p:inputText id="amountInput" value="#{item.amount}" rendered="#{searchView.editMode}" 
+	       	             converterMessage="Niepoprawna wartość ilości towaru" 
+	       	             validatorMessage="Niepoprawna ilość towaru, wartość powinna być wieksza od 0"
+	       	             onkeypress="checkEnter(event)" required="true" label="Ilość" >
+	       	            	<p:ajax update="-searchResultScroller-itemRow" process="-searchResultScroller-itemRow" 
+	       	            	onstart="return enterPressed;" event="change" listener="#{searchView.editItem(item)}" />
+	       	            	<f:validateLongRange minimum="1" maximum="9999" />
+	       	            </p:inputText>
+	       	            
 	                    <h:outputText value="#{item.category.name}" rendered="#{not searchView.editMode}" />
-	                    <p:inputText value="#{item.category.name}" rendered="#{searchView.editMode}" required="true" label="Kategoria" />
-                    </h:form>
-                </h:panelGrid>
-                <p:message id="messages" for="nameForm-nameInput" showDetail="true" showSummary="false" autoUpdate="true" closable="true" />
-               
-	            <p:commandLink id="removeItem" styleClass="removeItem" action="#{searchView.removeItem}" onsuccess="removeItem(event)" value="X" style="color: red">
-	               <f:param name="removeItemId" value="#{item.id}" />
-	            </p:commandLink>
-	            <p:commandLink id="editItem" styleClass="editItem" action="#{searchView.edit}" update="-searchResultScroller-itemRow" onsuccess="resizeInput()" value="E" style="color: blue" />
-               
+	                    <p:selectOneMenu id="catInput" rendered="#{searchView.editMode}" value="#{item.category.id}" required="true" label="Kategoria"  >
+							<f:selectItems value="#{searchView.categories}" var="cat" itemLabel="#{cat.name}" itemValue="#{cat.id}"/>
+						</p:selectOneMenu>
                     
+                </h:panelGrid>
+                </h:form>
+                <p:messages id="messages" for="dataForm" showDetail="true" showSummary="false" autoUpdate="true" closable="true" />
             </p:outputPanel>
+            
           </h:panelGrid>
    	   </p:dataScroller>
    	   

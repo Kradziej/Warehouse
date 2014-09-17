@@ -34,7 +34,7 @@ public class SearchView implements Serializable {
 	
 	public static enum SearchMode { 
 		
-		BY_NAME("by name"), BY_CAT("by category"), BY_DESC("by description"); 
+		BY_NAME("by name"), BY_CAT("by category"), BY_DESC("by description"), BY_PRICE("by price"); 
 		
 		private String name;
 		
@@ -53,11 +53,15 @@ public class SearchView implements Serializable {
 	@EJB private ManageDAO manage; 
 	private List<ItemEntity> items;
 	private String searchQuery;
+	private BigDecimal searchPriceTo;
+	private BigDecimal searchPriceFrom;
 	private boolean searchComplete;
 	private SearchMode searchMode;
 	//not serializable
 	private transient ItemEntityComparator comparator;
 	private boolean editMode;
+	private boolean rangeMode;
+	private List<CategoryEntity> categories;
 	
 
 	public SearchView() {}
@@ -67,6 +71,7 @@ public class SearchView implements Serializable {
 		
 		comparator = null;
 		editMode = false;
+		rangeMode = false;
 	}
 
 	
@@ -107,14 +112,23 @@ public class SearchView implements Serializable {
 	public void edit() {
 		
 		editMode = !editMode;
-		System.out.println("edit");
-		System.out.println(items.get(0).getName());
 	}
 	
-	public void editItem() {
+	public void editItem(ItemEntity item) {
 		
-		System.out.println("editItem");
+		System.out.print(item.getCategory().getId());
+		manage.updateItem(item);
 		editMode = !editMode;
+	}
+	
+	
+	public void selectSearchMode() {
+		
+		System.out.println("dddd");
+		if(searchMode == SearchMode.BY_PRICE)
+			rangeMode = true;
+		else
+			rangeMode = false;
 	}
 	
 	
@@ -124,18 +138,6 @@ public class SearchView implements Serializable {
 		// try catch here for database error ???????
 		int id = Integer.parseInt(params.get("removeItemId"));
 		manage.deleteItem(id);
-		
-		/*
-		PartialViewContext con = FacesContext.getCurrentInstance().getPartialViewContext();
-		PartialResponseWriter writer = con.getPartialResponseWriter();
-		
-		breaking partial-response so oncomplete is not called
-		
-		try {
-			writer.write("invalid   ");
-		} catch (IOException e) {
-			System.out.println("Cannot write partial response error");
-		}*/
 		
 	}
 	
@@ -190,9 +192,39 @@ public class SearchView implements Serializable {
 		return editMode;
 	}
 
+	public boolean isRangeMode() {
+		return rangeMode;
+	}
 
 	public void setEditMode(boolean editMode) {
 		this.editMode = editMode;
 	}
 
+	public List<CategoryEntity> getCategories() {
+		
+		if(categories == null)
+			categories = manage.getAllCategories();
+		
+		return categories;
+	}
+
+
+	public BigDecimal getSearchPriceTo() {
+		return searchPriceTo;
+	}
+
+
+	public void setSearchPriceTo(BigDecimal searchPriceTo) {
+		this.searchPriceTo = searchPriceTo;
+	}
+
+
+	public BigDecimal getSearchPriceFrom() {
+		return searchPriceFrom;
+	}
+
+
+	public void setSearchPriceFrom(BigDecimal searchPriceFrom) {
+		this.searchPriceFrom = searchPriceFrom;
+	}
 }

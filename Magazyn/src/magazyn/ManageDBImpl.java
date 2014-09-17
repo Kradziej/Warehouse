@@ -32,6 +32,14 @@ public class ManageDBImpl implements ManageDAO {
 	}
 	
 	@Override
+	public void updateItem(ItemEntity item) {
+		
+		item.setCategory( em.find(CategoryEntity.class, item.getCategory().getId()) );
+		em.merge(item);
+		em.flush();
+	}
+	
+	@Override
 	public List<ItemEntity> getAllItems() {
 		
 		TypedQuery<ItemEntity> query = em.createNamedQuery("Items.findAll", ItemEntity.class);

@@ -6,6 +6,7 @@ public interface ManageDAO {
 	
 	ItemEntity addItem(ItemEntity item, int categoryId);
 	void deleteItem(int id);
+	void updateItem(ItemEntity item);
 	List<ItemEntity> getAllItems();
 	List<CategoryEntity> getAllCategories();
 	List<ItemEntity> getItemsByName(String queryString);
