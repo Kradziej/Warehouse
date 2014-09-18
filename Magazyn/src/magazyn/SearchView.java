@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
+import javax.faces.component.UIComponent;
+import javax.faces.component.html.HtmlCommandLink;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.context.PartialResponseWriter;
@@ -62,7 +65,7 @@ public class SearchView implements Serializable {
 	private boolean editMode;
 	private boolean rangeMode;
 	private List<CategoryEntity> categories;
-	
+	private Map<Integer, Boolean> editModes;
 
 	public SearchView() {}
 	
@@ -75,12 +78,13 @@ public class SearchView implements Serializable {
 	}
 
 	
-	public void sortTable(ActionEvent event) {
+	public void sortTable(String sortBy) {
 		
 		if(comparator == null)
 			return;
 		
-		String sortBy = (String) event.getComponent().getAttributes().get("value");
+		System.out.println(sortBy);
+		//String sortBy = (String) event.getComponent().getAttributes().get("value");
 		sortBy = ("sort_by_" + sortBy).toUpperCase();
 		comparator.setMode(ItemEntityComparator.SortMode.valueOf(sortBy));
 		
@@ -90,6 +94,9 @@ public class SearchView implements Serializable {
 	
 	
 	public void search(ActionEvent event) {
+		
+		//Reset edit state
+		editMode = false;
 		
 		switch(searchMode) {
 		
@@ -106,25 +113,35 @@ public class SearchView implements Serializable {
 		
 		comparator = new ItemEntityComparator(-1);
 		searchComplete = true;
+		editModes = new HashMap<>();
+		for(ItemEntity c : items) {
+			
+			editModes.put(c.getId(), false);
+		}
 	}
 	
 	
-	public void edit() {
+	public void edit(ActionEvent event) {
 		
-		editMode = !editMode;
+		Map<String,String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+		int id = Integer.parseInt(params.get("itemId"));
+		
+		editMode = !editModes.get(id);
+		editModes.put(id, !editModes.get(id));
+		
 	}
 	
 	public void editItem(ItemEntity item) {
 		
 		System.out.print(item.getCategory().getId());
 		manage.updateItem(item);
-		editMode = !editMode;
+		editMode = !editModes.get(item.getId());
+		editModes.put(item.getId(), !editModes.get(item.getId()));
 	}
 	
 	
 	public void selectSearchMode() {
 		
-		System.out.println("dddd");
 		if(searchMode == SearchMode.BY_PRICE)
 			rangeMode = true;
 		else
@@ -202,8 +219,9 @@ public class SearchView implements Serializable {
 
 	public List<CategoryEntity> getCategories() {
 		
-		if(categories == null)
+		if(categories == null) {
 			categories = manage.getAllCategories();
+		}
 		
 		return categories;
 	}

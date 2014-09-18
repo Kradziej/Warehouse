@@ -10,7 +10,7 @@
  <h:head>
  	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
  	
- 	<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+ 	<!--  <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js" type="text/javascript"></script> -->
  	
  	<script type="text/javascript">
  	
@@ -19,7 +19,7 @@
  		$(e.target).closest('li').slideUp('slow');
  	}
  	
- 	enterPressed;
+ 	var enterPressed = false;
  	function checkEnter(e) {
  		
  		enterPressed = false; 
@@ -36,9 +36,21 @@
  		return confirm("Czy na pewno chcesz usunąc ten element z magazynu?");
  	}
  	
- 	function resizeInput(e) {
+ 	var lockState = false;
+ 	function lockSearchAndEdit() {
  		
- 		
+ 		lockState = !lockState;
+ 		if(lockState) {
+ 			$(".removeItem").each(function( index ) {
+ 					$( this ).prop( "disabled", true );
+ 					//alert($( this ).prop( "disabled", true ));
+ 				});
+ 			//$(".submitSearch").attr("disabled", "");
+ 		} else {
+ 			$(".removeItem").disable = false;
+ 			//$(".submitSearch").removeAttr("disabled");
+ 			
+ 		}
  	}
  	
  	</script>
@@ -219,11 +231,11 @@
 		     	
 		     	<h:panelGrid styleClass="dataRow dataRowLabels" columns="5" cellpadding="0">
 		     		
-		     		<p:commandLink actionListener="#{searchView.sortTable}" update="-searchResultScroller" value="Nazwa"  />
-		     		<p:commandLink actionListener="#{searchView.sortTable}" update="-searchResultScroller" value="Cena"  />
+		     		<p:commandLink action="#{searchView.sortTable('name')}" update="-searchResultScroller" value="Nazwa"  />
+		     		<p:commandLink action="#{searchView.sortTable('price')}" update="-searchResultScroller" value="Cena"  />
 	                <h:outputText value="Opis" />
-	                <p:commandLink actionListener="#{searchView.sortTable}" update="-searchResultScroller" value="Ilość"  />
-	                <p:commandLink actionListener="#{searchView.sortTable}" update="-searchResultScroller" value="Kategoria"  />
+	                <p:commandLink action="#{searchView.sortTable('amount')}" update="-searchResultScroller" value="Ilość"  />
+	                <p:commandLink action="#{searchView.sortTable('category')}" update="-searchResultScroller" value="Kategoria"  />
  					
  					
                 </h:panelGrid>
@@ -231,16 +243,19 @@
         </f:facet>
  
          <h:panelGrid columns="2" id="itemRow" styleClass="itemRow" columnClasses="logo,detail" rendered="#{searchView.isSearchResult()}">
-            <!--<p:graphicImage name="demo/images/car/#{car.brand}-big.gif" /> -->
+            <!-- <p:graphicImage name="demo/images/car/#{car.brand}-big.gif" /> -->
  
             <p:outputPanel>
-             <p:commandLink id="removeItem" styleClass="removeItem" action="#{searchView.removeItem}" 
-            onstart="return deleteDialog();" onsuccess="removeItem(event)" value="X" style="color: red">
-	               <f:param name="removeItemId" value="#{item.id}" />
+             <p:commandLink id="removeItem" styleClass="removeItem" action="#{searchView.removeItem}"
+            onstart="return deleteDialog();" onsuccess="removeItem(event)" value="X" style="color: red"
+            disabled="#{searchView.editMode}" >
+	               <f:param name="itemId" value="#{item.id}" />
 	        </p:commandLink>
-	        <p:commandLink id="editItem" styleClass="editItem" action="#{searchView.edit}" 
-	            update="-searchResultScroller-itemRow" process="-searchResultScroller-itemRow" 
-	            onsuccess="resizeInput()" value="E" style="color: blue" />
+	        <p:commandLink id="editItem" styleClass="editItem" actionListener="#{searchView.edit}" 
+	            update="-searchResultScroller-itemRow searchResultScroller-searchForm" 
+	            process="-searchResultScroller-itemRow" value="E" style="color: blue" >
+	            	 <f:param name="removeItemId" value="#{item.id}" />
+	       </p:commandLink>
                
              	<h:form id="dataForm">
                 <h:panelGrid styleClass="dataRow" columns="5" cellpadding="0">
