@@ -10,34 +10,8 @@
  <h:head>
  	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
  	
+ 	<link rel="stylesheet" type="text/css" href="styles/nav.css" />
  	<style>
- 	
- 	nav {
-		border-bottom: 2px solid #836FF2;
-		opacity: 0.8;
-		margin-bottom: 50px;
-	}
-	
-	nav a:after	 {
-		content: " /";
-		color: black;
-	}
-
-	nav ul {
-		list-style: none outside none;
-		margin: 0;
-		padding: 0;
-		margin-left: 15px;
-	}
-	
-	nav ul li {
-		display: inline-block;
-	}
-	
-	nav a {
-		font-size: 1.1em;
-		text-decoration: none;
-	}
 	
 	html {
 		height: 100%;
@@ -137,15 +111,14 @@
 			
 			<p:outputLabel for="amount" value="Ilość: " />
 			<p:inputText id="amount" value="#{addView.amount}" required="true" 
-			converterMessage="Niepoprawna wartość ilości towaru" 
-			validatorMessage="Niepoprawna ilość towaru, wartość powinna być wieksza od 0" >
+			validatorMessage="#{msg.itemAmountValMsg}" >
 				 <f:validateLongRange minimum="1" maximum="9999" />
 			</p:inputText>
 			
 			<p:outputLabel for="price" value="Cena: " />
 			<p:inputText id="price" value="#{addView.price}" required="true" 
-			converterMessage="Niepoprawny format ceny" validatorMessage="Niepoprawny format ceny" >
-				 <f:validateDoubleRange minimum="0.00" maximum="9999.99" />
+			converterMessage="#{msg.itemPriceValMsg}" >
+				 <f:validateDoubleRange minimum="0.00" maximum="9999999.99" />
 			</p:inputText>
 			
 			<p:outputLabel for="cat" styleClass="catLabel" value="Kategoria: " />

@@ -15,7 +15,8 @@ import java.math.BigDecimal;
 @NamedQueries({
 	@NamedQuery(name="Items.findAll", query="SELECT e FROM ItemEntity e"),
 	@NamedQuery(name="Items.searchByName", query="SELECT e FROM ItemEntity e WHERE e.name LIKE :name"),
-	@NamedQuery(name="Items.searchByCat", query="SELECT e FROM ItemEntity e WHERE e.category LIKE :cat")
+	@NamedQuery(name="Items.searchByCat", query="SELECT e FROM ItemEntity e WHERE e.category.name LIKE :cat"),
+	@NamedQuery(name="Items.searchByPriceRange", query="SELECT e FROM ItemEntity e WHERE e.price BETWEEN :from AND :to")
 }) 
 public class ItemEntity implements Serializable {
 	private static final long serialVersionUID = 1L;

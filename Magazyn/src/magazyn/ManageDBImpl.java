@@ -1,5 +1,6 @@
 package magazyn;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -99,6 +100,18 @@ public class ManageDBImpl implements ManageDAO {
 		ItemEntity item = em.find(ItemEntity.class, id);
 		em.remove(item);
 		em.flush();
+	}
+
+	@Override
+	public List<ItemEntity> getItemsByPriceRange(Object from, Object to) {
+		
+		from = (BigDecimal) from;
+		to = (BigDecimal) to;
+		TypedQuery<ItemEntity> query = 
+				em.createNamedQuery("Items.searchByPriceRange", 
+						ItemEntity.class).setParameter("from", from).setParameter("to", to);
+		
+		return sortItems(query.getResultList(), ItemEntityComparator.SortMode.SORT_BY_PRICE);
 	}
 	
 	

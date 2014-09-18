@@ -12,10 +12,12 @@
     <param-name>javax.faces.PROJECT_STAGE</param-name>
     <param-value>Development</param-value>
   </context-param>
+  
   <context-param>
     <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
     <param-value>.jsp</param-value>
   </context-param>
+  
   <context-param>
     <param-name>javax.faces.FACELETS_VIEW_MAPPINGS</param-name>
     <param-value>*.xhtml</param-value>
@@ -39,12 +41,7 @@
   
   
    <!-- servlets --> 
-  
-  <servlet>
-  	<servlet-name>Test</servlet-name>
-  	<servlet-class>magazyn.Test</servlet-class>
-  </servlet>
-  
+
   <servlet>
     <servlet-name>jsp</servlet-name>
     <servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>

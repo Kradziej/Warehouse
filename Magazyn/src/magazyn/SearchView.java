@@ -37,7 +37,7 @@ public class SearchView implements Serializable {
 	
 	public static enum SearchMode { 
 		
-		BY_NAME("by name"), BY_CAT("by category"), BY_DESC("by description"), BY_PRICE("by price"); 
+		BY_NAME("po nazwie"), BY_CAT("po kategorii"), BY_DESC("po opisie"), BY_PRICE("po cenie"); 
 		
 		private String name;
 		
@@ -59,7 +59,7 @@ public class SearchView implements Serializable {
 	private BigDecimal searchPriceTo;
 	private BigDecimal searchPriceFrom;
 	private boolean searchComplete;
-	private SearchMode searchMode;
+	private transient SearchMode searchMode;
 	//not serializable
 	private transient ItemEntityComparator comparator;
 	private boolean editMode;
@@ -75,6 +75,7 @@ public class SearchView implements Serializable {
 		comparator = null;
 		editMode = false;
 		rangeMode = false;
+		searchMode = SearchMode.BY_NAME;
 	}
 
 	
@@ -83,8 +84,6 @@ public class SearchView implements Serializable {
 		if(comparator == null)
 			return;
 		
-		System.out.println(sortBy);
-		//String sortBy = (String) event.getComponent().getAttributes().get("value");
 		sortBy = ("sort_by_" + sortBy).toUpperCase();
 		comparator.setMode(ItemEntityComparator.SortMode.valueOf(sortBy));
 		
@@ -108,6 +107,9 @@ public class SearchView implements Serializable {
 			break;
 		case BY_DESC:
 			items = manage.getItemsByDesc(searchQuery);
+			break;
+		case BY_PRICE:
+			items = manage.getItemsByPriceRange(searchPriceFrom, searchPriceTo);
 			break;
 		}
 		

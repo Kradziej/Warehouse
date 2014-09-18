@@ -14,76 +14,33 @@
  	
  	<script type="text/javascript">
  	
- 	function removeItem(e) {
- 		
- 		$(e.target).closest('li').slideUp('slow');
- 	}
- 	
- 	var enterPressed = false;
- 	function checkEnter(e) {
- 		
- 		enterPressed = false; 
- 		if (e.keyCode == 13) { 
- 			enterPressed = true; 
- 			e.target.onchange();
- 			e.preventDefault();
- 			e.stopPropagation();
- 		}
- 	}
- 	
- 	function deleteDialog() {
- 		
- 		return confirm("Czy na pewno chcesz usunąc ten element z magazynu?");
- 	}
- 	
- 	var lockState = false;
- 	function lockSearchAndEdit() {
- 		
- 		lockState = !lockState;
- 		if(lockState) {
- 			$(".removeItem").each(function( index ) {
- 					$( this ).prop( "disabled", true );
- 					//alert($( this ).prop( "disabled", true ));
- 				});
- 			//$(".submitSearch").attr("disabled", "");
- 		} else {
- 			$(".removeItem").disable = false;
- 			//$(".submitSearch").removeAttr("disabled");
- 			
- 		}
- 	}
+	 	function removeItem(e) {
+	 		
+	 		$(e.target).closest('li').slideUp('slow');
+	 	}
+	 	
+	 	var enterPressed = false;
+	 	function checkEnter(e) {
+	 		
+	 		enterPressed = false; 
+	 		if (e.keyCode == 13) { 
+	 			enterPressed = true; 
+	 			e.target.onchange();
+	 			e.preventDefault();
+	 			e.stopPropagation();
+	 		}
+	 	}
+	 	
+	 	function deleteDialog() {
+	 		
+	 		return confirm("Czy na pewno chcesz usunąc ten element z magazynu?");
+	 	}
  	
  	</script>
  	
- 	
+ 	<link rel="stylesheet" type="text/css" href="styles/nav.css" />
  	<style>
  	
- 	nav {
-		border-bottom: 2px solid #836FF2;
-		opacity: 0.8;
-		margin-bottom: 50px;
-	}
-	
-	nav a:after	 {
-		content: " /";
-		color: black;
-	}
-
-	nav ul {
-		list-style: none outside none;
-		margin: 0;
-		padding: 0;
-		margin-left: 15px;
-	}
-	
-	nav ul li {
-		display: inline-block;
-	}
-	
-	nav a {
-		font-size: 1.1em;
-		text-decoration: none;
-	}
 	
 	body {
 		font-size: 1.2em;
@@ -153,7 +110,9 @@
  	.dataRow td:nth-child(3) {
  		
  		width: 50%;
- 		 word-wrap: break-word;
+ 		word-wrap: break-word;
+ 		text-align: justify;
+ 		font-weight: normal;
  	}
  	
  	.editItem {
@@ -181,9 +140,34 @@
  	
  		padding-top: 10px;
  	}
- 		
  	
- 
+ 	.fromPrice {
+ 	
+ 		width: 10%;
+ 		margin-right: 10px;
+ 		vertical-align: middle;
+ 	}
+ 	
+ 	.toPrice {
+ 	
+ 		width: 10%;
+ 		vertical-align: middle;
+ 	}
+ 	
+ 	#searchResultScroller-searchForm-priceSearch1 {
+ 	
+ 		width: 60%;
+ 		margin: auto;
+ 		margin-bottom: 10px;
+ 	}
+ 	
+ 	
+ 	#searchResultScroller-searchForm-priceSearch2 {
+ 	
+ 		width: 60%;
+ 		margin: auto;
+ 		margin-bottom: 10px;
+ 	}
  	
  	</style>
  </h:head>
@@ -195,8 +179,6 @@
 
     <ui:include src="header.xhtml" />
     
-    <p:messages id="message2" 
-	  showDetail="true" showSummary="false" autoUpdate="true" closable="true" />
     
 	  <p:dataScroller id="searchResultScroller" value="#{searchView.items}" var="item" chunkSize="10">
 	  
@@ -205,19 +187,25 @@
         	<p:outputPanel id="search">
         	
         		<h:form id="searchForm">
+        		
+        		  	<p:message id="priceSearch1" styleClass="fromPriceMsg" for="fromPrice" 
+     				showDetail="true" showSummary="false" autoUpdate="true" closable="true" />
+     				<p:message id="priceSearch2" styleClass="toPriceMsg" for="toPrice" 
+     				showDetail="true" showSummary="false" autoUpdate="true" closable="true" />
+     				
 					<p:inputText id="searchQuery" styleClass="searchQuery" value="#{searchView.searchQuery}" 
 					rendered="#{not searchView.rangeMode}"  />
 					
 					<p:outputLabel for="fromPrice" value="Od: " rendered="#{searchView.rangeMode}"  />
 					<p:inputText id="fromPrice" styleClass="fromPrice" value="#{searchView.searchPriceFrom}" 
-					rendered="#{searchView.rangeMode}"  >
-						<f:validateDoubleRange minimum="0.00" maximum="9999.99" />
+					rendered="#{searchView.rangeMode}" converterMessage="#{msg.itemPriceValMsg}" >
+						<f:validateDoubleRange minimum="0.00" maximum="9999999.99" />
 					</p:inputText>
 					
 					<p:outputLabel for="toPrice" value="Do: "  rendered="#{searchView.rangeMode}" />
 					<p:inputText id="toPrice" styleClass="toPrice" value="#{searchView.searchPriceTo}" 
-					rendered="#{searchView.rangeMode}"  >
-						<f:validateDoubleRange minimum="0.00" maximum="9999.99" />
+					rendered="#{searchView.rangeMode}" converterMessage="#{msg.itemPriceValMsg}" >
+						<f:validateDoubleRange minimum="0.00" maximum="9999999.99" />
 					</p:inputText>
 					
 					<p:selectOneMenu id="mode" styleClass="mode" value="#{searchView.searchMode}">
@@ -242,19 +230,18 @@
 	     	</p:outputPanel>
         </f:facet>
  
-         <h:panelGrid columns="2" id="itemRow" styleClass="itemRow" columnClasses="logo,detail" rendered="#{searchView.isSearchResult()}">
-            <!-- <p:graphicImage name="demo/images/car/#{car.brand}-big.gif" /> -->
- 
+         <h:panelGrid columns="2" id="itemRow" styleClass="itemRow" columnClasses="detail" rendered="#{searchView.isSearchResult()}">
+    
             <p:outputPanel>
              <p:commandLink id="removeItem" styleClass="removeItem" action="#{searchView.removeItem}"
             onstart="return deleteDialog();" onsuccess="removeItem(event)" value="X" style="color: red"
             disabled="#{searchView.editMode}" >
-	               <f:param name="itemId" value="#{item.id}" />
+	               <f:param name="removeItemId" value="#{item.id}" />
 	        </p:commandLink>
 	        <p:commandLink id="editItem" styleClass="editItem" actionListener="#{searchView.edit}" 
 	            update="-searchResultScroller-itemRow searchResultScroller-searchForm" 
 	            process="-searchResultScroller-itemRow" value="E" style="color: blue" >
-	            	 <f:param name="removeItemId" value="#{item.id}" />
+	            	 <f:param name="itemId" value="#{item.id}" />
 	       </p:commandLink>
                
              	<h:form id="dataForm">
@@ -272,10 +259,10 @@
 	                    <h:outputText value="#{item.price}" rendered="#{not searchView.editMode}" />
 	                    <p:inputText id="priceInput" value="#{item.price}" onkeypress="checkEnter(event)" 
 	                    rendered="#{searchView.editMode}" required="true" label="Cena" 
-	                    converterMessage="Niepoprawny format ceny" validatorMessage="Niepoprawny format ceny" >
+	                    converterMessage="#{msg.itemPriceValMsg}" >
 	                    	<p:ajax update="-searchResultScroller-itemRow" process="-searchResultScroller-itemRow" 
 	                    	onstart="return enterPressed;" event="change" listener="#{searchView.editItem(item)}" />
-	                    	 <f:validateDoubleRange minimum="0.00" maximum="9999.99" />
+	                    	 <f:validateDoubleRange minimum="0.00" maximum="9999999.99" />
 	                    </p:inputText>
 	                    
 	                    <h:outputText value="#{item.description}" rendered="#{not searchView.editMode}" />
@@ -288,8 +275,7 @@
 	                    
 	                    <h:outputText value="#{item.amount}" rendered="#{not searchView.editMode}" />
 	       	            <p:inputText id="amountInput" value="#{item.amount}" rendered="#{searchView.editMode}" 
-	       	             converterMessage="Niepoprawna wartość ilości towaru" 
-	       	             validatorMessage="Niepoprawna ilość towaru, wartość powinna być wieksza od 0"
+	       	             validatorMessage="#{msg.itemAmountValMsg}"
 	       	             onkeypress="checkEnter(event)" required="true" label="Ilość" >
 	       	            	<p:ajax update="-searchResultScroller-itemRow" process="-searchResultScroller-itemRow" 
 	       	            	onstart="return enterPressed;" event="change" listener="#{searchView.editItem(item)}" />
@@ -303,7 +289,7 @@
                     
                 </h:panelGrid>
                 </h:form>
-                <p:messages id="messages" for="dataForm" showDetail="true" showSummary="false" autoUpdate="true" closable="true" />
+                <p:messages id="messages" showDetail="true" showSummary="false" autoUpdate="true" closable="true" />
             </p:outputPanel>
             
           </h:panelGrid>

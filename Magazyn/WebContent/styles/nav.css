@@ -1,0 +1,27 @@
+@CHARSET "UTF-8";
+
+nav {
+		border-bottom: 2px solid #836FF2;
+		opacity: 0.8;
+		margin-bottom: 50px;
+}
+	
+nav a:after	 {
+	content: " /";
+	color: black;
+}
+
+nav ul {
+	list-style: none outside none;
+	margin: 0;
+	padding: 0;
+	margin-left: 15px;
+}
+	
+nav ul li {
+	display: inline-block;
+}
+	
+nav a {
+	text-decoration: none;
+}

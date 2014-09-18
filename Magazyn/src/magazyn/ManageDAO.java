@@ -12,6 +12,7 @@ public interface ManageDAO {
 	List<ItemEntity> getItemsByName(String queryString);
 	List<ItemEntity> getItemsByCategory(String queryString);
 	List<ItemEntity> getItemsByDesc(String queryString);
+	List<ItemEntity> getItemsByPriceRange(Object from, Object to);
 	List<ItemEntity> sortItems(List<ItemEntity> items, Object mode);
 
 }
