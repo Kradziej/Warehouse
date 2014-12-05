@@ -2,7 +2,7 @@
     <wb-module deploy-name="Magazyn">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <property name="context-root" value="Magazyn"/>
+        <property name="context-root" value="Magazyn"/> 
         <property name="java-output-path" value="/Magazyn/build/classes"/>
     </wb-module>
 </project-modules>
