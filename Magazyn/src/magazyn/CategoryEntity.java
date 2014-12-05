@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="categories")
-
+ 
 @NamedQueries({
 	@NamedQuery(name="Categories.findAll", query="SELECT e FROM CategoryEntity e")
 }) 

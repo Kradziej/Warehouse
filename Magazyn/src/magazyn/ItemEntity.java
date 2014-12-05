@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 /**
  * The persistent class for the items database table.
  * 
- */
+ */ 
 @Entity
 @Table(name="items")
 

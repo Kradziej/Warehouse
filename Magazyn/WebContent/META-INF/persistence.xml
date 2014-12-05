@@ -6,7 +6,7 @@
     <persistence-unit name="warehouseManagement">
     
       <jta-data-source>jdbc/warehouseDB</jta-data-source>
-        
+         
       <properties>
         <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
         <property name="openjpa.jdbc.DBDictionary" value="mysql(ReservedWords='AGAINST')"/>

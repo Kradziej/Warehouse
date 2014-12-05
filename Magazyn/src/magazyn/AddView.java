@@ -16,7 +16,7 @@ import javax.faces.event.ActionEvent;
 @ViewScoped
 public class AddView implements Serializable {
 	
-	
+	 
 	@EJB private ManageDAO manage; 
 
 	private String name;
@@ -38,12 +38,12 @@ public class AddView implements Serializable {
 		
 		try {
 			item = manage.addItem(item, categoryId);
-			msg = "Dodano nowy towar "+item.getName()+" do kategorii " + item.getCategory().getName();
+			msg = "New item "+item.getName()+" added to category " + item.getCategory().getName();
 			faceMsg.setSummary(msg);
 			faceMsg.setSeverity(FacesMessage.SEVERITY_INFO);
 		} catch (IllegalArgumentException e) {
 			System.out.println("Failed to save item to category of ID " + categoryId);
-			msg = "Nie uda³o sie dodaæ towaru";
+			msg = "Failed to add item";
 			faceMsg.setSummary(msg);
 			faceMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
 		}

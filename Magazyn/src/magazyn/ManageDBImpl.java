@@ -16,7 +16,7 @@ import javax.persistence.TypedQuery;
 @Local(ManageDAO.class)
 public class ManageDBImpl implements ManageDAO {
 
-	
+	 
 	@PersistenceContext
 	private EntityManager em;
 	

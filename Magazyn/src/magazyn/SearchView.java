@@ -36,7 +36,7 @@ import com.sun.corba.se.spi.orbutil.fsm.Action;
 public class SearchView implements Serializable {
 	
 	public static enum SearchMode { 
-		
+		 
 		BY_NAME("po nazwie"), BY_CAT("po kategorii"), BY_DESC("po opisie"), BY_PRICE("po cenie"); 
 		
 		private String name;

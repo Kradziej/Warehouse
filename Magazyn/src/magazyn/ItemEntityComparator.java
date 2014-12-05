@@ -7,7 +7,7 @@ public class ItemEntityComparator implements Comparator<ItemEntity> {
 	
 	private int reverse;
 	private SortMode mode;
-	
+	 
 	public ItemEntityComparator() {
 		reverse = 1;
 	}
